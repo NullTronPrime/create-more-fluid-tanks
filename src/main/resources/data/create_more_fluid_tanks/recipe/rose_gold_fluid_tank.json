@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " Q ",
+    "QSQ",
+    " G "
+  ],
+  "key": {
+    "Q": {
+      "item": "create:polished_rose_quartz"
+    },
+    "S": {
+      "item": "create_more_fluid_tanks:sturdy_fluid_tank"
+    },
+    "G": {
+      "tag": "c:ingots/gold"
+    }
+  },
+  "result": {
+    "id": "create_more_fluid_tanks:rose_gold_fluid_tank",
+    "count": 1
+  }
+}

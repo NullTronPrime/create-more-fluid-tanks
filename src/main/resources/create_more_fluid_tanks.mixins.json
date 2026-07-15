@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "package": "com.nulltronprime.createmorefluidtanks.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "refmap": "create_more_fluid_tanks.refmap.json",
+    "mixins": [
+        "BoilerDataMixin",
+        "FluidNetworkMixin",
+        "PumpBlockEntityMixin"
+    ],
+    "minVersion": "0.8"
+}
