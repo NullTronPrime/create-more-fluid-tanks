@@ -6,7 +6,8 @@
     "mixins": [
         "BoilerDataMixin",
         "FluidNetworkMixin",
-        "PumpBlockEntityMixin"
+        "PumpBlockEntityMixin",
+        "SteamEngineBlockEntityMixin"
     ],
     "minVersion": "0.8"
 }

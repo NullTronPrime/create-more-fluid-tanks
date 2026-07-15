@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "ARA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "R": {
+      "item": "create_more_fluid_tanks:rose_gold_fluid_tank"
+    }
+  },
+  "result": {
+    "id": "create_more_fluid_tanks:amethyst_fluid_tank",
+    "count": 1
+  }
+}

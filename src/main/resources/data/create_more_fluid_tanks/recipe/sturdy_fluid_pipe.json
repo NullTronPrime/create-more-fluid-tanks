@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " O ",
-    "OCO",
-    " O "
+    "SSS",
+    "SCS",
+    "SSS"
   ],
   "key": {
-    "O": {
-      "tag": "c:obsidian"
+    "S": {
+      "item": "create:sturdy_sheet"
     },
     "C": {
       "item": "create:fluid_pipe"

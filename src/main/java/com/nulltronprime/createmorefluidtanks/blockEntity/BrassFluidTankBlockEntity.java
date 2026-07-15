@@ -8,6 +8,9 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlock.Shape;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat.Chaser;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -103,6 +106,12 @@ public class BrassFluidTankBlockEntity extends FluidTankBlockEntity {
             tankInventory.setCapacity(getTotalTankSize() * getPerBlockCapacity());
             if (tankInventory.getSpace() < 0)
                 tankInventory.drain(-tankInventory.getSpace(), FluidAction.EXECUTE);
+            if (clientPacket) {
+                float fillState = getFillState();
+                if (getFluidLevel() == null)
+                    setFluidLevel(LerpedFloat.linear().startWithValue(fillState));
+                getFluidLevel().chase(fillState, 0.5f, Chaser.EXP);
+            }
         }
     }
 

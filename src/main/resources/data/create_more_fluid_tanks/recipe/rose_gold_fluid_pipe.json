@@ -1,16 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " R ",
-    "RCR",
-    " R "
+    "RRR",
+    "RBR",
+    "RRR"
   ],
   "key": {
     "R": {
       "tag": "c:ingots/rose_gold"
     },
-    "C": {
-      "item": "create:fluid_pipe"
+    "B": {
+      "item": "create_more_fluid_tanks:brass_fluid_pipe"
     }
   },
   "result": {

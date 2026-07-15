@@ -1,13 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " S ",
-    "S S",
-    " S "
+    "SSS",
+    "SCS",
+    "SSS"
   ],
   "key": {
     "S": {
-      "tag": "c:plates/brass"
+      "item": "create:sturdy_sheet"
+    },
+    "C": {
+      "item": "create:fluid_tank"
     }
   },
   "result": {

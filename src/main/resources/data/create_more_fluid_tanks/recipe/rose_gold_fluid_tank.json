@@ -1,19 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " Q ",
-    "QSQ",
-    " G "
+    "RRR",
+    "RBR",
+    "RRR"
   ],
   "key": {
-    "Q": {
-      "item": "create:polished_rose_quartz"
+    "R": {
+      "tag": "c:ingots/rose_gold"
     },
-    "S": {
-      "item": "create_more_fluid_tanks:sturdy_fluid_tank"
-    },
-    "G": {
-      "tag": "c:ingots/gold"
+    "B": {
+      "item": "create_more_fluid_tanks:brass_fluid_tank"
     }
   },
   "result": {

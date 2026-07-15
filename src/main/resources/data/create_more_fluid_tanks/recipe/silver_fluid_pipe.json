@@ -1,16 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " S ",
-    "SCS",
-    " S "
+    "SSS",
+    "SBS",
+    "SSS"
   ],
   "key": {
     "S": {
       "tag": "c:ingots/silver"
     },
-    "C": {
-      "item": "create:fluid_pipe"
+    "B": {
+      "item": "create_more_fluid_tanks:brass_fluid_pipe"
     }
   },
   "result": {

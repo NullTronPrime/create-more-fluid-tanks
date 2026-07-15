@@ -8,6 +8,8 @@ license = "${mod_license}"
     displayName = "${mod_name}"
     description = '''${mod_description}'''
     authors = "${mod_authors}"
+    credits = "nulltronprime, soub"
+    logoFile = "icon.png"
 
 [[mixins]]
     config = "${mod_id}.mixins.json"

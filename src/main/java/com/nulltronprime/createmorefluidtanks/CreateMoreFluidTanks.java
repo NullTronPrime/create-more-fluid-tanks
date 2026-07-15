@@ -5,9 +5,6 @@ import com.nulltronprime.createmorefluidtanks.blockEntity.BrassFluidTankBlockEnt
 import com.nulltronprime.createmorefluidtanks.blockEntity.RoseGoldFluidTankBlockEntity;
 import com.nulltronprime.createmorefluidtanks.blockEntity.SilverFluidTankBlockEntity;
 import com.nulltronprime.createmorefluidtanks.blockEntity.SturdyFluidTankBlockEntity;
-import com.nulltronprime.createmorefluidtanks.client.ModFluidTankRenderer;
-import com.nulltronprime.createmorefluidtanks.client.ModMoreTanksClient;
-import com.nulltronprime.createmorefluidtanks.client.ModPartialModels;
 import com.nulltronprime.createmorefluidtanks.display.PipeFlowDisplaySource;
 import com.nulltronprime.createmorefluidtanks.registry.ModBlockEntityTypes;
 import com.nulltronprime.createmorefluidtanks.registry.ModBlocks;
@@ -24,11 +21,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
@@ -44,34 +38,13 @@ public class CreateMoreFluidTanks {
         ModBlockEntityTypes.BLOCK_ENTITY_TYPES.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 
-        modEventBus.addListener(FMLClientSetupEvent.class, this::clientSetup);
-        modEventBus.addListener(this::registerBERs);
         modEventBus.addListener(this::registerCapabilities);
-        modEventBus.addListener(ModelEvent.RegisterAdditional.class, ModMoreTanksClient::onRegisterAdditionalModels);
-        modEventBus.addListener(ModelEvent.ModifyBakingResult.class, ModMoreTanksClient::onModelBake);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerDisplaySources);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         registerBlockSources();
-    }
-
-    private void clientSetup(final FMLClientSetupEvent event) {
-        ModPartialModels.init();
-    }
-
-    private void registerBERs(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.BRASS_FLUID_TANK.get(),
-                ctx -> new ModFluidTankRenderer(ctx, "brass"));
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.STURDY_FLUID_TANK.get(),
-                ctx -> new ModFluidTankRenderer(ctx, "sturdy"));
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.ROSE_GOLD_FLUID_TANK.get(),
-                ctx -> new ModFluidTankRenderer(ctx, "rose_gold"));
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.SILVER_FLUID_TANK.get(),
-                ctx -> new ModFluidTankRenderer(ctx, "silver"));
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.AMETHYST_FLUID_TANK.get(),
-                ctx -> new ModFluidTankRenderer(ctx, "amethyst"));
     }
 
     private void registerCapabilities(final RegisterCapabilitiesEvent event) {
