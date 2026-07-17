@@ -14,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -77,6 +78,7 @@ public class MultiTankBlockItem extends BlockItem {
 		if (!face.getAxis().isVertical())
 			return;
 		ItemStack stack = ctx.getItemInHand();
+		Item itemType = stack.getItem();
 		Level world = ctx.getLevel();
 		BlockPos pos = ctx.getClickedPos();
 		BlockPos placedOnPos = pos.relative(face.getOpposite());
@@ -119,8 +121,33 @@ public class MultiTankBlockItem extends BlockItem {
 			}
 		}
 
-		if (!player.isCreative() && stack.getCount() < tanksToPlace)
-			return;
+		if (!player.isCreative()) {
+			int total = 0;
+			for (ItemStack s : player.getInventory().items)
+				if (s.getItem() == itemType)
+					total += s.getCount();
+			if (total < tanksToPlace)
+				return;
+
+			int maxStack = stack.getMaxStackSize();
+			int inHand = stack.getCount();
+			int toPull = Math.min(tanksToPlace, maxStack) - inHand;
+			if (toPull > 0) {
+				for (int i = 0; i < player.getInventory().items.size(); i++) {
+					if (i == player.getInventory().selected)
+						continue;
+					ItemStack slot = player.getInventory().items.get(i);
+					if (!slot.isEmpty() && slot.getItem() == itemType) {
+						int take = Math.min(slot.getCount(), toPull);
+						slot.shrink(take);
+						stack.grow(take);
+						toPull -= take;
+						if (toPull <= 0)
+							break;
+					}
+				}
+			}
+		}
 
 		for (int xOffset = 0; xOffset < width; xOffset++) {
 			for (int zOffset = 0; zOffset < width; zOffset++) {
@@ -128,6 +155,24 @@ public class MultiTankBlockItem extends BlockItem {
 				BlockState blockState = world.getBlockState(offsetPos);
 				if (FluidTankBlock.isTank(blockState))
 					continue;
+
+				if (!player.isCreative() && ctx.getItemInHand().isEmpty()) {
+					boolean pulled = false;
+					for (int i = 0; i < player.getInventory().items.size(); i++) {
+						if (i == player.getInventory().selected)
+							continue;
+						ItemStack slot = player.getInventory().items.get(i);
+						if (!slot.isEmpty() && slot.getItem() == itemType) {
+							slot.shrink(1);
+							ctx.getItemInHand().setCount(1);
+							pulled = true;
+							break;
+						}
+					}
+					if (!pulled)
+						continue;
+				}
+
 				BlockPlaceContext context = BlockPlaceContext.at(ctx, offsetPos, face);
 				player.getPersistentData().putBoolean("SilenceTankSound", true);
 				super.place(context);

@@ -77,8 +77,8 @@ public class PipeFlowDisplaySource extends DisplaySource {
         }
 
         int pumpRange = AllConfigs.server().fluids.mechanicalPumpRange.get();
-        int maxRange = Math.max(1, (int) (pumpRange / propMult));
-        int dist = findNearestPumpDistance(be);
+        int maxRange = Math.max(1, (int) (pumpRange * propMult));
+        int dist = findNearestPumpDistance(be, transport);
         int remaining = dist >= 0 ? Math.max(1, maxRange - dist) : maxRange;
         return List.of(Component.translatable(
             CreateMoreFluidTanks.MOD_ID + ".display_source.pipe_flow.range_display", remaining));
@@ -99,7 +99,7 @@ public class PipeFlowDisplaySource extends DisplaySource {
         }, "Mode");
     }
 
-    private static int findNearestPumpDistance(BlockEntity be) {
+    private static int findNearestPumpDistance(BlockEntity be, FluidTransportBehaviour startTransport) {
         Level level = be.getLevel();
         if (level == null)
             return -1;
@@ -110,6 +110,8 @@ public class PipeFlowDisplaySource extends DisplaySource {
         frontier.add(Pair.of(0, start));
 
         int pumpRange = AllConfigs.server().fluids.mechanicalPumpRange.get();
+        if (startTransport instanceof MaterialPipeFluidTransportBehaviour matTransport)
+            pumpRange = Math.max(pumpRange, (int) (pumpRange * matTransport.propagationMultiplier));
 
         while (!frontier.isEmpty()) {
             Pair<Integer, BlockPos> entry = frontier.remove(0);
@@ -131,6 +133,12 @@ public class PipeFlowDisplaySource extends DisplaySource {
             FluidTransportBehaviour pipe = FluidPropagator.getPipe(level, currentPos);
             if (pipe == null)
                 continue;
+
+            if (pipe instanceof MaterialPipeFluidTransportBehaviour matPipe) {
+                int adjusted = (int) (AllConfigs.server().fluids.mechanicalPumpRange.get() * matPipe.propagationMultiplier);
+                if (adjusted > pumpRange)
+                    pumpRange = adjusted;
+            }
 
             BlockState currentState = level.getBlockState(currentPos);
             for (Direction dir : FluidPropagator.getPipeConnections(currentState, pipe)) {

@@ -28,6 +28,11 @@ public class MaterialPipeFluidTransportBehaviour extends FluidTransportBehaviour
     }
 
     @Override
+    public boolean hasAnyPressure() {
+        return true;
+    }
+
+    @Override
     public boolean canHaveFlowToward(BlockState state, Direction direction) {
         return (FluidPipeBlock.isPipe(state) || state.getBlock() instanceof EncasedPipeBlock)
             && state.getValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(direction));

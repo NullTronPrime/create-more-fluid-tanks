@@ -69,10 +69,14 @@ public class SilverFluidTankBlockEntity extends FluidTankBlockEntity {
         return MAX_TANK_SIZE;
     }
 
+    public static int maxHeight() {
+        return 50;
+    }
+
     @Override
     public int getMaxLength(Direction.Axis axis, int w) {
         if (axis == Direction.Axis.Y)
-            return getMaxHeight();
+            return maxHeight();
         return getMaxWidth();
     }
 

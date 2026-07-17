@@ -5,6 +5,7 @@ import com.nulltronprime.createmorefluidtanks.blockEntity.BrassFluidTankBlockEnt
 import com.nulltronprime.createmorefluidtanks.blockEntity.RoseGoldFluidTankBlockEntity;
 import com.nulltronprime.createmorefluidtanks.blockEntity.SilverFluidTankBlockEntity;
 import com.nulltronprime.createmorefluidtanks.blockEntity.SturdyFluidTankBlockEntity;
+import com.nulltronprime.createmorefluidtanks.config.CMoreTanksPipeConfig;
 import com.nulltronprime.createmorefluidtanks.display.PipeFlowDisplaySource;
 import com.nulltronprime.createmorefluidtanks.registry.ModBlockEntityTypes;
 import com.nulltronprime.createmorefluidtanks.registry.ModBlocks;
@@ -20,7 +21,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -32,11 +35,17 @@ public class CreateMoreFluidTanks {
     public static final String MOD_ID = "create_more_fluid_tanks";
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    }
+
     public CreateMoreFluidTanks(IEventBus modEventBus, ModContainer modContainer) {
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntityTypes.BLOCK_ENTITY_TYPES.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+
+        modContainer.registerConfig(ModConfig.Type.SERVER, CMoreTanksPipeConfig.SPEC, "create_more_fluid_tanks-pipes.toml");
 
         modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::commonSetup);

@@ -1,5 +1,6 @@
 package com.nulltronprime.createmorefluidtanks.blockEntity;
 
+import com.nulltronprime.createmorefluidtanks.config.CMoreTanksPipeConfig;
 import com.nulltronprime.createmorefluidtanks.registry.ModBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -17,11 +18,11 @@ public class SilverFluidPipeBlockEntity extends MaterialFluidPipeBlockEntity {
 
     @Override
     protected float getPropagationMultiplier() {
-        return 2.0f;
+        return CMoreTanksPipeConfig.SILVER_PROPAGATION.get().floatValue();
     }
 
     @Override
     protected float getFlowMultiplier() {
-        return 2.25f;
+        return CMoreTanksPipeConfig.SILVER_FLOW.get().floatValue();
     }
 }

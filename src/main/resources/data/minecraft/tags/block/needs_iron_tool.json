@@ -1,0 +1,10 @@
+{
+  "values": [
+    "create_more_fluid_tanks:brass_fluid_tank",
+    "create_more_fluid_tanks:silver_fluid_tank",
+    "create_more_fluid_tanks:sturdy_fluid_tank",
+    "create_more_fluid_tanks:brass_fluid_pipe",
+    "create_more_fluid_tanks:silver_fluid_pipe",
+    "create_more_fluid_tanks:sturdy_fluid_pipe"
+  ]
+}

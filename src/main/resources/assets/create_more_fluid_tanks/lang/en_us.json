@@ -17,6 +17,7 @@
   "block.create_more_fluid_tanks.amethyst_fluid_tank": "Amethyst Fluid Tank",
   "block.create_more_fluid_tanks.amethyst_fluid_pipe": "Amethyst Fluid Pipe",
   "create_more_fluid_tanks.recipe.crafting.rose_gold_fluid_pipe": "Crafting Rose Gold Fluid Pipe",
+  "create_more_fluid_tanks.recipe.crafting.rose_gold_fluid_tank": "Crafting Rose Gold Fluid Tank",
   "create_more_fluid_tanks.recipe.crafting.amethyst_fluid_pipe": "Crafting Amethyst Fluid Pipe",
   "create_more_fluid_tanks.recipe.crafting.amethyst_fluid_tank": "Crafting Amethyst Fluid Tank",
   "create_more_fluid_tanks.display_source.pipe_flow": "Pipe Flow",
