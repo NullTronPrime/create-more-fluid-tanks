@@ -2,10 +2,12 @@ package com.nulltronprime.createmorefluidtanks.client;
 
 import com.nulltronprime.createmorefluidtanks.CreateMoreFluidTanks;
 import com.nulltronprime.createmorefluidtanks.registry.ModBlocks;
+import com.simibubi.create.content.fluids.tank.FluidTankCTBehaviour;
 import com.simibubi.create.content.fluids.tank.FluidTankModel;
 import com.simibubi.create.foundation.block.connected.AllCTTypes;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.CTSpriteShifter;
+import com.simibubi.create.foundation.block.connected.CTModel;
 import com.simibubi.create.foundation.model.ModelSwapper;
 
 import net.minecraft.client.resources.model.BakedModel;
@@ -17,6 +19,8 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.event.ModelEvent;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -98,12 +102,24 @@ public class ModMoreTanksClient {
         var shift = getCT(textureBase, textureBase + "_connected");
         var topShift = getCT(textureBase + "_top", textureBase + "_top_connected");
         var innerShift = getCT(textureBase + "_inner", textureBase + "_inner_connected");
+        var mgShift = getCT(textureBase + "_more_glass", textureBase + "_connected_more_glass");
+        var mgTopShift = getCT(textureBase + "_top_more_glass", textureBase + "_top_connected_more_glass");
+        var mgInnerShift = getCT(textureBase + "_inner_more_glass", textureBase + "_inner_connected_more_glass");
         ModelSwapper.swapModels(models, locations, original -> {
             try {
                 Constructor<FluidTankModel> ctor = FluidTankModel.class.getDeclaredConstructor(
                         BakedModel.class, CTSpriteShiftEntry.class, CTSpriteShiftEntry.class, CTSpriteShiftEntry.class);
                 ctor.setAccessible(true);
-                return ctor.newInstance(original, shift, topShift, innerShift);
+                FluidTankModel model = ctor.newInstance(original, shift, topShift, innerShift);
+
+                Field behaviourField = CTModel.class.getDeclaredField("behaviour");
+                behaviourField.setAccessible(true);
+                Object behaviour = behaviourField.get(model);
+                Method setter = behaviour.getClass().getDeclaredMethod("cmft$setMoreGlassShifts",
+                        CTSpriteShiftEntry.class, CTSpriteShiftEntry.class, CTSpriteShiftEntry.class);
+                setter.invoke(behaviour, mgShift, mgTopShift, mgInnerShift);
+
+                return model;
             } catch (Exception e) {
                 CreateMoreFluidTanks.LOGGER.error("Failed to create FluidTankModel for " + textureBase, e);
                 return original;

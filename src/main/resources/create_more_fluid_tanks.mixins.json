@@ -6,6 +6,11 @@
     "mixins": [
         "BoilerDataMixin",
         "FluidNetworkMixin",
+        "FluidTankBlockEntityMixin",
+        "FluidTankCTBehaviourMixin",
+        "FluidTankModelMixin",
+        "FluidTankShapeMixin",
+        "ModTankBEMoreGlassMixin",
         "PumpBlockEntityMixin",
         "SteamEngineBlockEntityMixin"
     ],
