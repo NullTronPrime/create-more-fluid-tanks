@@ -2,6 +2,8 @@ package com.nulltronprime.createmorefluidtanks.blockEntity;
 
 import java.util.List;
 
+import com.nulltronprime.createmorefluidtanks.api.LongFluidTank;
+import com.nulltronprime.createmorefluidtanks.accessor.GlassStateAccessor;
 import com.nulltronprime.createmorefluidtanks.registry.ModBlockEntityTypes;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock.Shape;
@@ -23,8 +25,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import com.simibubi.create.foundation.utility.CreateLang;
+import net.minecraft.ChatFormatting;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 public class SturdyFluidTankBlockEntity extends FluidTankBlockEntity {
@@ -84,17 +89,53 @@ public class SturdyFluidTankBlockEntity extends FluidTankBlockEntity {
         return getCapacityMultiplier() * CAPACITY_MULTIPLIER;
     }
 
+    public static int getStaticPerBlockCapacity() {
+        return FluidTankBlockEntity.getCapacityMultiplier() * CAPACITY_MULTIPLIER;
+    }
+
+    private int cmft_lastLuminosity = -1;
+    private boolean cmft_lastReversed = false;
+
     @Override
     protected SmartFluidTank createInventory() {
         return new SmartFluidTank(getPerBlockCapacity(), this::onFluidStackChanged);
     }
 
     @Override
+    protected void onFluidStackChanged(FluidStack newFluidStack) {
+        if (!hasLevel())
+            return;
+
+        FluidType attributes = newFluidStack.getFluid().getFluidType();
+        int luminosity = (int) (attributes.getLightLevel(newFluidStack) / 1.2f);
+        boolean reversed = attributes.isLighterThanAir();
+
+        if (luminosity != cmft_lastLuminosity || reversed != cmft_lastReversed) {
+            cmft_lastLuminosity = luminosity;
+            cmft_lastReversed = reversed;
+            super.onFluidStackChanged(newFluidStack);
+            return;
+        }
+
+        if (!level.isClientSide) {
+            setChanged();
+            sendData();
+        }
+
+        if (isVirtual()) {
+            if (getFluidLevel() == null)
+                setFluidLevel(LerpedFloat.linear().startWithValue(getFillState()));
+            getFluidLevel().chase(getFillState(), 0.5f, Chaser.EXP);
+        }
+    }
+
+    @Override
     public void applyFluidTankSize(int blocks) {
-        tankInventory.setCapacity(blocks * getPerBlockCapacity());
-        int overflow = tankInventory.getFluidAmount() - tankInventory.getCapacity();
+        LongFluidTank lft = (LongFluidTank)(Object) tankInventory;
+        lft.setActualCapacity((long) blocks * getPerBlockCapacity());
+        long overflow = lft.getActualAmount() - lft.getActualCapacity();
         if (overflow > 0)
-            tankInventory.drain(overflow, FluidAction.EXECUTE);
+            tankInventory.drain((int) Math.min(overflow, Integer.MAX_VALUE), FluidAction.EXECUTE);
         forceFluidLevelUpdate = true;
     }
 
@@ -104,12 +145,22 @@ public class SturdyFluidTankBlockEntity extends FluidTankBlockEntity {
     }
 
     @Override
+    public float getFillState() {
+        LongFluidTank lft = (LongFluidTank)(Object) tankInventory;
+        long amount = lft.getActualAmount();
+        long capacity = lft.getActualCapacity();
+        if (capacity <= 0) return 0;
+        return (float) ((double) amount / (double) capacity);
+    }
+
+    @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         if (isController()) {
-            tankInventory.setCapacity(getTotalTankSize() * getPerBlockCapacity());
-            if (tankInventory.getSpace() < 0)
-                tankInventory.drain(-tankInventory.getSpace(), FluidAction.EXECUTE);
+            LongFluidTank lft = (LongFluidTank)(Object) tankInventory;
+            lft.setActualCapacity((long) getTotalTankSize() * getPerBlockCapacity());
+            if (lft.getActualCapacity() < lft.getActualAmount())
+                tankInventory.drain((int) Math.min(lft.getActualAmount() - lft.getActualCapacity(), Integer.MAX_VALUE), FluidAction.EXECUTE);
             if (clientPacket) {
                 float fillState = getFillState();
                 if (getFluidLevel() == null)
@@ -122,6 +173,14 @@ public class SturdyFluidTankBlockEntity extends FluidTankBlockEntity {
     @Override
     public void setWindows(boolean window) {
         this.window = window;
+
+        GlassStateAccessor accessor = (GlassStateAccessor) this;
+        int gs = accessor.getGlassState();
+        boolean useSpecialGlass = window && (gs == 2 || gs == 3);
+        Shape specialShape = useSpecialGlass
+            ? Shape.valueOf(gs == 3 ? "SUPER_GLASS" : "MORE_GLASS")
+            : null;
+
         for (int yOffset = 0; yOffset < height; yOffset++) {
             for (int xOffset = 0; xOffset < width; xOffset++) {
                 for (int zOffset = 0; zOffset < width; zOffset++) {
@@ -135,8 +194,10 @@ public class SturdyFluidTankBlockEntity extends FluidTankBlockEntity {
                     if (!FluidTankBlock.isTank(blockState))
                         continue;
 
-                    Shape shape = Shape.PLAIN;
-                    if (window) {
+                    Shape shape;
+                    if (useSpecialGlass) {
+                        shape = specialShape;
+                    } else if (window) {
                         if (width == 1) {
                             shape = Shape.WINDOW;
                         } else if (width == 2) {
@@ -153,7 +214,11 @@ public class SturdyFluidTankBlockEntity extends FluidTankBlockEntity {
                             boolean onEast = xOffset == width - 1 && zOffset >= start && zOffset < start + perSide;
                             if (onNorth || onSouth || onWest || onEast)
                                 shape = Shape.WINDOW;
+                            else
+                                shape = Shape.PLAIN;
                         }
+                    } else {
+                        shape = Shape.PLAIN;
                     }
 
                     Shape current = blockState.getValue(FluidTankBlock.SHAPE);
@@ -169,6 +234,15 @@ public class SturdyFluidTankBlockEntity extends FluidTankBlockEntity {
         sendData();
     }
 
+    private static String fmt(long mb) {
+        if (mb >= 10_000_000) {
+            String s = String.format("%,.3f", mb / 1000.0);
+            s = s.replaceAll("0+$", "").replaceAll("\\.$", "");
+            return s + " B";
+        }
+        return String.format("%,d", mb) + " mB";
+    }
+
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         FluidTankBlockEntity controllerBE = getControllerBE();
@@ -176,7 +250,38 @@ public class SturdyFluidTankBlockEntity extends FluidTankBlockEntity {
             return false;
         if (controllerBE.boiler.addToGoggleTooltip(tooltip, isPlayerSneaking, controllerBE.getTotalTankSize()))
             return true;
-        return containedFluidTooltip(tooltip, isPlayerSneaking,
-                level.getCapability(Capabilities.FluidHandler.BLOCK, controllerBE.getBlockPos(), null));
+
+        IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK,
+            controllerBE.getBlockPos(), null);
+        if (handler == null || handler.getTanks() == 0)
+            return false;
+
+        boolean isLong = handler instanceof LongFluidTank lft;
+        long actualAmount = isLong ? ((LongFluidTank) handler).getActualAmount()
+            : handler.getFluidInTank(0).getAmount();
+        long actualCapacity = isLong ? ((LongFluidTank) handler).getActualCapacity()
+            : handler.getTankCapacity(0);
+        FluidStack fluidStack = handler.getFluidInTank(0);
+
+        CreateLang.translate("gui.goggles.fluid_container")
+            .forGoggles(tooltip);
+
+        if (!fluidStack.isEmpty()) {
+            CreateLang.fluidName(fluidStack)
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip, 1);
+
+            CreateLang.builder()
+                .add(Component.literal(fmt(actualAmount)).withStyle(ChatFormatting.GOLD))
+                .text(ChatFormatting.GRAY, " / ")
+                .add(Component.literal(fmt(actualCapacity)).withStyle(ChatFormatting.DARK_GRAY))
+                .forGoggles(tooltip, 1);
+        } else {
+            CreateLang.translate("gui.goggles.fluid_container.capacity")
+                .add(Component.literal(fmt(actualCapacity)).withStyle(ChatFormatting.GOLD))
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip, 1);
+        }
+        return true;
     }
 }

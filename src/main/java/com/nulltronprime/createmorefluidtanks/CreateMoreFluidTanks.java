@@ -35,6 +35,8 @@ public class CreateMoreFluidTanks {
     public static final String MOD_ID = "create_more_fluid_tanks";
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    public static final ThreadLocal<Boolean> suppressConnectivityUpdates = ThreadLocal.withInitial(() -> false);
+
     public static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }

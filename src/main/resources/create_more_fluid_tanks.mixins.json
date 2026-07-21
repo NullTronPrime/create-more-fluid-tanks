@@ -6,13 +6,18 @@
     "mixins": [
         "BoilerDataMixin",
         "FluidNetworkMixin",
+        "FluidStackMixin",
         "FluidTankBlockEntityMixin",
+        "FluidTankBlockMixin",
         "FluidTankCTBehaviourMixin",
+        "FluidTankMixin",
         "FluidTankModelMixin",
         "FluidTankShapeMixin",
         "ModTankBEMoreGlassMixin",
         "PumpBlockEntityMixin",
-        "SteamEngineBlockEntityMixin"
+        "SmartBlockEntityTickerMixin",
+        "SteamEngineBlockEntityMixin",
+        "TankFieldAccessor"
     ],
     "minVersion": "0.8"
 }

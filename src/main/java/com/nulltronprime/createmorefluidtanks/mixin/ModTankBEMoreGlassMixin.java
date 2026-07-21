@@ -41,6 +41,10 @@ public class ModTankBEMoreGlassMixin {
         for (int yOffset = 0; yOffset < self.getHeight(); yOffset++) {
             for (int xOffset = 0; xOffset < self.getWidth(); xOffset++) {
                 for (int zOffset = 0; zOffset < self.getWidth(); zOffset++) {
+                    if (self.getWidth() > 2 && xOffset > 0 && xOffset < self.getWidth() - 1
+                        && zOffset > 0 && zOffset < self.getWidth() - 1
+                        && yOffset > 0 && yOffset < self.getHeight() - 1)
+                        continue;
                     BlockPos pos = self.getBlockPos().offset(xOffset, yOffset, zOffset);
                     BlockState blockState = self.getLevel().getBlockState(pos);
                     if (!FluidTankBlock.isTank(blockState))

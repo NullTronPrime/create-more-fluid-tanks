@@ -45,6 +45,12 @@ public class FluidTankBlockEntityMixin {
         cmft$glassState = state;
     }
 
+    @Inject(method = "updateConnectivity", at = @At("HEAD"), cancellable = true, remap = false)
+    private void suppressUpdateConnectivity(CallbackInfo ci) {
+        if (CreateMoreFluidTanks.suppressConnectivityUpdates.get())
+            ci.cancel();
+    }
+
     @Inject(method = "toggleWindows", at = @At("HEAD"), cancellable = true, remap = false)
     private void onToggleWindows(CallbackInfo ci) {
         FluidTankBlockEntity be = ((FluidTankBlockEntity) (Object) this).getControllerBE();
@@ -66,6 +72,10 @@ public class FluidTankBlockEntityMixin {
             for (int y = 0; y < be.getHeight(); y++) {
                 for (int x = 0; x < be.getWidth(); x++) {
                     for (int z = 0; z < be.getWidth(); z++) {
+                        if (be.getWidth() > 2 && x > 0 && x < be.getWidth() - 1
+                            && z > 0 && z < be.getWidth() - 1
+                            && y > 0 && y < be.getHeight() - 1)
+                            continue;
                         BlockPos p = be.getBlockPos().offset(x, y, z);
                         BlockState bs = be.getLevel().getBlockState(p);
                         if (FluidTankBlock.isTank(bs))
@@ -80,6 +90,10 @@ public class FluidTankBlockEntityMixin {
             for (int y = 0; y < be.getHeight(); y++) {
                 for (int x = 0; x < be.getWidth(); x++) {
                     for (int z = 0; z < be.getWidth(); z++) {
+                        if (be.getWidth() > 2 && x > 0 && x < be.getWidth() - 1
+                            && z > 0 && z < be.getWidth() - 1
+                            && y > 0 && y < be.getHeight() - 1)
+                            continue;
                         BlockPos p = be.getBlockPos().offset(x, y, z);
                         BlockState bs = be.getLevel().getBlockState(p);
                         if (FluidTankBlock.isTank(bs))
@@ -103,6 +117,10 @@ public class FluidTankBlockEntityMixin {
             for (int y = 0; y < self.getHeight(); y++) {
                 for (int x = 0; x < self.getWidth(); x++) {
                     for (int z = 0; z < self.getWidth(); z++) {
+                        if (self.getWidth() > 2 && x > 0 && x < self.getWidth() - 1
+                            && z > 0 && z < self.getWidth() - 1
+                            && y > 0 && y < self.getHeight() - 1)
+                            continue;
                         BlockPos p = self.getBlockPos().offset(x, y, z);
                         BlockState bs = self.getLevel().getBlockState(p);
                         if (FluidTankBlock.isTank(bs))
@@ -119,6 +137,10 @@ public class FluidTankBlockEntityMixin {
             for (int y = 0; y < self.getHeight(); y++) {
                 for (int x = 0; x < self.getWidth(); x++) {
                     for (int z = 0; z < self.getWidth(); z++) {
+                        if (self.getWidth() > 2 && x > 0 && x < self.getWidth() - 1
+                            && z > 0 && z < self.getWidth() - 1
+                            && y > 0 && y < self.getHeight() - 1)
+                            continue;
                         BlockPos p = self.getBlockPos().offset(x, y, z);
                         BlockState bs = self.getLevel().getBlockState(p);
                         if (FluidTankBlock.isTank(bs))
