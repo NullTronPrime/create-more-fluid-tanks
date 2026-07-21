@@ -40,22 +40,7 @@ public class MaterialPipeFluidTransportBehaviour extends FluidTransportBehaviour
 
     @Override
     public void addPressure(Direction side, boolean inbound, float pressure) {
-        float scaled = pressure * propagationMultiplier;
-        super.addPressure(side, inbound, scaled);
-
-        if (!inbound && scaled > 0) {
-            Level level = blockEntity.getLevel();
-            if (level == null) return;
-            BlockPos here = blockEntity.getBlockPos();
-            for (Direction dir : interfaces.keySet()) {
-                if (dir == side) continue;
-                PipeConnection conn = interfaces.get(dir);
-                if (conn.getPressure().getFirst() > 0) continue;
-                if (level.getBlockEntity(here.relative(dir)) instanceof PumpBlockEntity) {
-                    super.addPressure(dir, true, scaled);
-                }
-            }
-        }
+        super.addPressure(side, inbound, pressure);
     }
 
     @Override
