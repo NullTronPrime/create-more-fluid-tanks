@@ -17,7 +17,7 @@ public class SturdyFluidPipeBlockEntity extends MaterialFluidPipeBlockEntity {
     }
 
     @Override
-    protected float getPropagationMultiplier() {
+    public float getPropagationMultiplier() {
         return CMoreTanksPipeConfig.STURDY_PROPAGATION.get().floatValue();
     }
 

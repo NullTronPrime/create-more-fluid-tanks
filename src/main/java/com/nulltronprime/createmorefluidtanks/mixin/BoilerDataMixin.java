@@ -17,9 +17,4 @@ public class BoilerDataMixin {
     private int removeBoilerSizeCap(int a, int b) {
         return b;
     }
-
-    @Redirect(method = "getActualHeat", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I", ordinal = 1), remap = false)
-    private int capActualHeatAt20(int a, int b) {
-        return Math.min(20, Math.min(a, b));
-    }
 }

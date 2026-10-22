@@ -15,6 +15,10 @@ public class ModBoilerData extends BoilerData {
         this.heatMultiplier = heatMultiplier;
     }
 
+    public float getHeatMultiplier() {
+        return heatMultiplier;
+    }
+
     @Override
     public boolean updateTemperature(FluidTankBlockEntity controller) {
         BlockPos controllerPos = controller.getBlockPos();

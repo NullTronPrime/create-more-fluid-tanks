@@ -17,7 +17,7 @@ public class RoseGoldFluidPipeBlockEntity extends MaterialFluidPipeBlockEntity {
     }
 
     @Override
-    protected float getPropagationMultiplier() {
+    public float getPropagationMultiplier() {
         return CMoreTanksPipeConfig.ROSE_GOLD_PROPAGATION.get().floatValue();
     }
 

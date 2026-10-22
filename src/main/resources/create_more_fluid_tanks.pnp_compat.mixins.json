@@ -1,0 +1,15 @@
+{
+    "required": false,
+    "minVersion": "0.8",
+    "package": "com.nulltronprime.createmorefluidtanks.compat",
+    "compatibilityLevel": "JAVA_21",
+    "refmap": "create_more_fluid_tanks.refmap.json",
+    "plugin": "com.nulltronprime.createmorefluidtanks.compat.PnpCompatMixinPlugin",
+    "mixins": [
+        "FlowSolverMixin",
+        "PumpRangeProbeMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

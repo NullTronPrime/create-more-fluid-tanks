@@ -17,7 +17,7 @@ public class AmethystFluidPipeBlockEntity extends MaterialFluidPipeBlockEntity {
     }
 
     @Override
-    protected float getPropagationMultiplier() {
+    public float getPropagationMultiplier() {
         return CMoreTanksPipeConfig.AMETHYST_PROPAGATION.get().floatValue();
     }
 

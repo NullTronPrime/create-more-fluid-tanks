@@ -18,7 +18,7 @@ public abstract class MaterialFluidPipeBlockEntity extends FluidPipeBlockEntity 
         super(type, pos, state);
     }
 
-    protected abstract float getPropagationMultiplier();
+    public abstract float getPropagationMultiplier();
 
     protected abstract float getFlowMultiplier();
 

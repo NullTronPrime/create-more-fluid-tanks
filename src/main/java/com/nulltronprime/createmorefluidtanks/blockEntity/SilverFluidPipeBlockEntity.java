@@ -17,7 +17,7 @@ public class SilverFluidPipeBlockEntity extends MaterialFluidPipeBlockEntity {
     }
 
     @Override
-    protected float getPropagationMultiplier() {
+    public float getPropagationMultiplier() {
         return CMoreTanksPipeConfig.SILVER_PROPAGATION.get().floatValue();
     }
 

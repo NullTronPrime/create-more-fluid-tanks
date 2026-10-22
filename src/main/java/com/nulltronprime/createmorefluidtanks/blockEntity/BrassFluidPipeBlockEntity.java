@@ -17,7 +17,7 @@ public class BrassFluidPipeBlockEntity extends MaterialFluidPipeBlockEntity {
     }
 
     @Override
-    protected float getPropagationMultiplier() {
+    public float getPropagationMultiplier() {
         return CMoreTanksPipeConfig.BRASS_PROPAGATION.get().floatValue();
     }
 
